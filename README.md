@@ -13,6 +13,7 @@ GitHub repository for the ACS Heat Team - heatwaves and extreme heat.
 - Annual maximum daily maximum temperature (TXx)
 - Days above 35C (TXge35)
 - Days above 40C (TXge40)
+- Days above 45C (TXge45)
 - Days below 2C (TNle02)
 
 ## Products:
@@ -39,6 +40,7 @@ In terms of the colors:
 |Annual maximum daily maximum temperature|TXx|annual|[ETCCDI Climate Change Indices](http://etccdi.pacificclimate.org/list_27_indices.shtml)|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:||`/g/data/ia39/ncra/heat/<variable_id>`|28/06/2024|
 |Days above 35C|TXge35|annual|[ETCCDI Climate Change Indices](http://etccdi.pacificclimate.org/list_27_indices.shtml)|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:||`/g/data/ia39/ncra/heat/<variable_id>`|28/06/2024
 |Days above 40C|TXge40|annual|[ETCCDI Climate Change Indices](http://etccdi.pacificclimate.org/list_27_indices.shtml)|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:||`/g/data/ia39/ncra/heat/<variable_id>`|28/06/2024
+|Days above 45C|TXge45|annual|[ETCCDI Climate Change Indices](http://etccdi.pacificclimate.org/list_27_indices.shtml)|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:||`/g/data/ia39/ncra/heat/<variable_id>`|28/06/2024
 |Days below 2C|TNle02|annual|[ETCCDI Climate Change Indices](http://etccdi.pacificclimate.org/list_27_indices.shtml)|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:|:green_circle:<br>:green_circle:||`/g/data/ia39/ncra/heat/<variable_id>`|28/06/2024
 
 ## Authors and acknowledgment
