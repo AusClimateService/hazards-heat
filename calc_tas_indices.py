@@ -90,6 +90,19 @@ def get_fname(index,tperiod):
     assert isinstance(tperiod,str)
     return args.ofile_drs.replace("INDEX",index).replace("TPERIOD",tperiod)
 
+def global_attrs(inargs):
+    """Return dictionary of global attributes to add to output file"""
+    
+    return {
+            'description': "Heat indices calculated for the Australian Climate Service",
+            'driving_model': inargs.driving_model,
+            'downscaling_model': inargs.downscaling_model,
+            'pathway': inargs.pathway,
+            'bias_correction_method': inargs.bias_correction_method,
+            'contact': "Mitchell Black (mitchell.black@bom.gov.au)",
+            'code': "https://github.com/Ausutils.climateateService/hazards-heat"
+            }
+
 def main(inargs):
     """Calculate the number of days per year when temperatures meet threshold conditions"""
 
@@ -112,18 +125,18 @@ def main(inargs):
 
                 if inargs.index == 'TXm':
                     index = xclim.indices.tx_mean(get_tasmax(inargs,Y,Y),freq='YS')
-                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC','standard_name':'annual_mean_daily_maximum_temperature',\
-                            'long_name':'annual_mean_daily_maximum_temperature','cell_methods':'time: mean (interval: 1Y)'})
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
+                            'long_name':'annual mean daily maximum temperature','cell_methods':'time: mean (interval: 1Y)'})
             
                 elif inargs.index == 'TXx':
                     index = xclim.indices.tx_max(get_tasmax(inargs,Y,Y),freq='YS')
-                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC','standard_name':'annual_maximum_daily_maximum_temperature',\
-                            'long_name':'annual_maximum_daily_maximum_temperature','cell_methods':'time: maximum (interval: 1Y)'})
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
+                            'long_name':'annual maximum daily maximum temperature','cell_methods':'time: maximum (interval: 1Y)'})
  
                 elif inargs.index in ['TXge35','TXge40','TXge45','TXge50']:
                     index = xclim.indices.tx_days_above(get_tasmax(inargs,Y,Y), thresh=f'{float(inargs.index[4:6])} degC', freq='YS', op='>=')
-                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1','standard_name':f'days_ge_{float(inargs.index[4:6])}degC',\
-                            'long_name':f'days_ge_{float(inargs.index[4:6])}degC','cell_methods':'time: count (interval: 1Y)'})
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
+                            'long_name':f'days greater than or equal to {float(inargs.index[4:6])}degC','cell_methods':'time: count (interval: 1Y)'})
                 
                 elif inargs.index == 'TX90P':
                     if not os.path.exists(get_fname(index='TX90perc_doy',tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}')):
@@ -136,22 +149,22 @@ def main(inargs):
                     tasmax_per = xr.open_dataset(get_fname(index='TX90perc_doy',tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
                     print(tasmax_per)
                     index = xclim.indices.tx90p(tget_tasmax(inargs,Y,Y),tasmax_per)
-                    index = update_attrs(index,{'name':inargs.index,'units':'1','standard_name':'days_above_90th_percentile',\
-                            'long_name':f'days_above_90th_percentile','cell_methods':'time: count (interval: 1Y)'})
+                    index = update_attrs(index,{'name':inargs.index,'units':'1',\
+                            'long_name':f'days above the doy 90th percentile','cell_methods':'time: count (interval: 1Y)'})
                 
                 elif inargs.index == 'TNle02':
                     index = xclim.indices.tn_days_below(get_tasmin(inargs,Y,Y), thresh=f'{float(inargs.index[4:6])} degC', freq='YS', op='<=')
-                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1','standard_name':f'days_le_{float(inargs.index[4:6])}degC',\
-                            'long_name':f'days_le_{float(inargs.index[4:6])}degC','cell_methods':'time: count (interval: 1Y)'})
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
+                            'long_name':f'days less than or equal to {float(inargs.index[4:6])}degC','cell_methods':'time: count (interval: 1Y)'})
                 
-                utils.generalio.save_data(index,get_fname(index=inargs.index,tperiod=f'{Y}0101-{Y}{inargs.yearend.replace("-","")}').replace('day','annual'))
+                utils.generalio.save_data(index,get_fname(index=inargs.index,tperiod=f'{Y}0101-{Y}{inargs.yearend.replace("-","")}').replace('day','annual'),append_global_attrs=global_attrs(inargs))
     
         # Concatenate annual files
         fnames = [get_fname(index=inargs.index,tperiod=f'{Y}0101-{Y}{inargs.yearend.replace("-","")}').replace('day','annual') for Y in range(inargs.StartYr,inargs.EndYr+1)]
         fnames.sort()    
         index_cat = utils.generalio.read_data(infiles=fnames,var=inargs.index)
         utils.timeseries.check_correct_ntimesteps(index_cat,sdate=f'{inargs.StartYr}-01-01',edate=f'{inargs.EndYr}-{inargs.yearend}',freq='YS')
-        utils.generalio.save_data(index_cat,get_fname(index=inargs.index,tperiod=f"{inargs.StartYr}0101-{inargs.EndYr}{inargs.yearend.replace('-','')}").replace('day','annual'))
+        utils.generalio.save_data(index_cat,get_fname(index=inargs.index,tperiod=f"{inargs.StartYr}0101-{inargs.EndYr}{inargs.yearend.replace('-','')}").replace('day','annual'),append_global_attrs=global_attrs(inargs))
 
         if inargs.tidy_wkdir:
             for f in fnames:
