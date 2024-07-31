@@ -93,11 +93,11 @@ The following workflow was used to produce the ensemble maps and regional aggreg
 
 For absolute values:
 
-![Absolute value - ensemble median](figures/methodology1.png)
+![Absolute value - ensemble median](figures/methodology1.PNG)
 
 For changes between GWLs:
 
-![Change between GWLs - ensemble median](figures/methodology2.png)
+![Change between GWLs - ensemble median](figures/methodology2.PNG)
 
 ## Further reading:
 > Nairn, J. R., and R. J. Fawcett, 2015: The excess heat factor: A metric for heatwave intensity and its use in classifying heatwave severity, Int. J. Environ. Res. Public Health, 12(1), 227–253, https://doi.org/10.3390/ijerph120100227
