@@ -87,6 +87,18 @@ In addition to the data files (in netcdf format), results have also been present
 ![Regional changes in HWF between GWL 3.0 and GWL1.2](figures/HWF_regional_summary_GWL30-GWL12.png)
 *Figure 4. Sample heatmap showing the change in **HWF** (days per year experiencing heatwave conditions) between GWL 3.0 and GWL 1.2, averaged accross the different NCRA study regions. Here, results are presented for each of the 13 ACS regional climate model simulations, as well as the ensemble median.*
 
+## How were the ensemble statistics (e.g., maps, regional summaries) created?
+
+The following workflow was used to produce the ensemble maps and regional aggregate heatmaps.
+
+For absolute values:
+
+![Absolute value - ensemble median](figures/methodology1.png)
+
+For changes between GWLs:
+
+![Change between GWLs - ensemble median](figures/methodology2.png)
+
 ## Further reading:
 > Nairn, J. R., and R. J. Fawcett, 2015: The excess heat factor: A metric for heatwave intensity and its use in classifying heatwave severity, Int. J. Environ. Res. Public Health, 12(1), 227–253, https://doi.org/10.3390/ijerph120100227
 >
