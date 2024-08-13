@@ -17,7 +17,7 @@ There are a number of indices for monitoring changes in extreme temperatures, in
 >
 > **TXge45** – the number of days each year with maximum daily temperature ≥ 45 °C.
 >
-> **TNlt2** – the number of days each year with minimum daily temperature < 2 °C (a measure of potential frost days).
+> **TNle02** – the number of days each year with minimum daily temperature ≤ 2 °C (a measure of potential frost days).
 
 Here, maps for each of these indices are presented for Global Warming Levels 1.2, 1.5, 2.0 and 3.0 °C (with respect to the pre-industrial 1850-1900 mean value). These maps are created using data from climate model simulations.
 
