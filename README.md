@@ -107,13 +107,8 @@ For changes between GWLs:
 > Zhang, X., L. Alexander, G. C. Hegerl, P. Jones, A. K. Tank, T. C. Peterson, B. Trewin, and F. W. Zwiers, 2011: Indices for monitoring changes in extremes based on daily temperature and precipitation data. Wiley Interdiscip. Rev.: Climate Change, 2, 851–870, https://doi.org/10.1002/wcc.147 
 
 ## Authors and acknowledgment
-Hazard team:
-- [ ] Mitchell Black (BOM, lead)
-- [ ] Matt Beaty (ABS, alternate lead)
-- [ ] Cass Rogers (BOM, contributor)
-- [ ] David Hoffmann (BOM, contributor)
-- [ ] Jessica Bhardwaj (BOM, contributor)
-- [ ] Steph Jacobs (BOM, contributor)
-- [ ] Aurel Griesser (BOM, contributor)
-- [ ] Naomi Benger (BOM, contributor)
+Contact:
+- [ ] Mitchell Black (BOM, lead, mitchell.black@bom.gov.au)
+- [ ] Cass Rogers (BOM, contributor, cassandra.rogers@bom.gov.au)
+
 
