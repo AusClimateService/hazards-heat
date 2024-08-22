@@ -75,17 +75,23 @@ In terms of the colors:
 
 In addition to the data files (in netcdf format), results have also been presented in the form of maps (also available on NCI) and, for some hazard metrics, tables summarising regional changes in the aggregated hazard indice(s).
 
-![Encemble central estimate for the change in TXx between GWL 3.0 and GWL1.2](figures/TXx_AGCD-05i_MME50_ssp370_v1-r1-ACS-QME-AGCD-1960-2022_GWL30-GWL12-change.png)
-*Figure 1. Sample map showing the change in **TXx** (hottest day of the year) between GWL 3.0 and GWL 1.2. Here, results are presented as the ensemble median (i.e., the ensemble central estimate) for the 13 ACS regional climate model simulations used in the analysis.*
+![Ensemble central estimate for TXx at GWL1.2](figures/TXx_AGCD-05i_MME50_ssp370_v1-r1-ACS-QME-AGCD-1960-2022_GWL12.png)
+*Figure 1. Sample map showing the change in **TXx** (hottest day of the year) for GWL 1.2. Here, results are presented as the ensemble median (i.e., the ensemble central estimate) for the 13 ACS regional climate model simulations used in the analysis.*
+
+![Regional average TXx for GWL1.2](figures/TXx_regional_summary_GWL12.png)
+*Figure 2. Sample heatmap showing **TXx** (hottest day of the year) for GWL 1.2, averaged accross the different NCRA study regions. Here, results are presented for each of the 13 ACS regional climate model simulations, as well as the ensemble median.*
+
+![Ensemble central estimate for TXx at GWL3.0](figures/TXx_AGCD-05i_MME50_ssp370_v1-r1-ACS-QME-AGCD-1960-2022_GWL30.png)
+*Figure 3. Sample map showing the change in **TXx** (hottest day of the year) for GWL 3.0. Here, results are presented as the ensemble median (i.e., the ensemble central estimate) for the 13 ACS regional climate model simulations used in the analysis.*
+
+![Regional average TXx for GWL3.0](figures/TXx_regional_summary_GWL30.png)
+*Figure 4. Sample heatmap showing **TXx** (hottest day of the year) for GWL 3.0, averaged accross the different NCRA study regions. Here, results are presented for each of the 13 ACS regional climate model simulations, as well as the ensemble median.*
+
+![Ensemble central estimate for the change in TXx between GWL 3.0 and GWL1.2](figures/TXx_AGCD-05i_MME50_ssp370_v1-r1-ACS-QME-AGCD-1960-2022_GWL30-GWL12-change.png)
+*Figure 5. Sample map showing the change in **TXx** (hottest day of the year) between GWL 3.0 and GWL 1.2. Here, results are presented as the ensemble median (i.e., the ensemble central estimate) for the 13 ACS regional climate model simulations used in the analysis.*
 
 ![Regional changes in TXx between GWL 3.0 and GWL1.2](figures/TXx_regional_summary_GWL30-GWL12.png)
-*Figure 2. Sample heatmap showing the change in **TXx** (hottest day of the year) between GWL 3.0 and GWL 1.2, averaged accross the different NCRA study regions. Here, results are presented for each of the 13 ACS regional climate model simulations, as well as the ensemble median.*
-
-![Encemble central estimate for the change in HWF between GWL 3.0 and GWL1.2](figures/HWF_AGCD-05i_MME50_ssp370_v1-r1-ACS-QME-AGCD-1960-2022_GWL30-GWL12-change.png)
-*Figure 3. Sample map showing the change in **HWF** (days per year experiencing heatwave conditions) between GWL 3.0 and GWL 1.2. Here, results are presented as the ensemble median (i.e., the ensemble central estimate) for the 13 ACS regional climate model simulations used in the analysis.*
-
-![Regional changes in HWF between GWL 3.0 and GWL1.2](figures/HWF_regional_summary_GWL30-GWL12.png)
-*Figure 4. Sample heatmap showing the change in **HWF** (days per year experiencing heatwave conditions) between GWL 3.0 and GWL 1.2, averaged accross the different NCRA study regions. Here, results are presented for each of the 13 ACS regional climate model simulations, as well as the ensemble median.*
+*Figure 6. Sample heatmap showing the change in **TXx** (hottest day of the year) between GWL 3.0 and GWL 1.2, averaged accross the different NCRA study regions. Here, results are presented for each of the 13 ACS regional climate model simulations, as well as the ensemble median.*
 
 ## How were the ensemble statistics (e.g., maps, regional summaries) created?
 
