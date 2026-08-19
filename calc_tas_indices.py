@@ -108,11 +108,14 @@ def main(inargs):
 
     dask.diagnostics.ProgressBar().register()
 
-    if inargs.calendar == 'standard':
-        inargs.yearend = '12-31'
-    elif inargs.calendar == '360_day':
+    sample_file = inargs.tasmax_fpath.format(Y=inargs.StartYr,pathway=utils.climate.emission_pathway(inargs.StartYr,inargs.pathway))
+    nc_calendar = utils.timeseries.get_netcdf_calendar(sample_file)
+    
+    if nc_calendar == '360_day':
         inargs.yearend = '12-30'
-
+    else:
+        inargs.yearend = '12-31'
+ 
     if inargs.ofile_drs:
         if not all(s in inargs.ofile_drs for s in ['INDEX','TPERIOD']):
             raise ValueError("user defined argument ofile_drs must contain strings 'INDEX' and 'TPERIOD'") 
@@ -132,7 +135,23 @@ def main(inargs):
                     index = xclim.indices.tx_max(get_tasmax(inargs,Y,Y),freq='YS')
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
                             'long_name':'annual maximum daily maximum temperature','cell_methods':'time: maximum (interval: 1Y)'})
+                
+                elif inargs.index == 'TNm':
+                    index = xclim.indices.tn_mean(get_tasmin(inargs,Y,Y),freq='YS')
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
+                            'long_name':'annual mean daily minimum temperature','cell_methods':'time: mean (interval: 1Y)'})
+            
+                elif inargs.index == 'TNn':
+                    index = xclim.indices.tn_min(get_tasmin(inargs,Y,Y),freq='YS')
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
+                            'long_name':'annual minimum daily minimum temperature','cell_methods':'time: minimum (interval: 1Y)'})
  
+                elif inargs.index == 'TGm':
+                    tas = xclim.indices.tas(get_tasmin(inargs,Y,Y),get_tasmax(inargs,Y,Y))
+                    index = xclim.indices.tg_mean(tas,freq='YS')
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
+                            'long_name':'annual mean daily average temperature','cell_methods':'time: mean (interval: 1Y)'})
+                
                 elif inargs.index in ['TXge35','TXge40','TXge45','TXge50']:
                     index = xclim.indices.tx_days_above(get_tasmax(inargs,Y,Y), thresh=f'{float(inargs.index[4:6])} degC', freq='YS', op='>=')
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
@@ -186,14 +205,14 @@ author:
                                      argument_default=argparse.SUPPRESS,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
                                      
-    parser.add_argument("--index", type=str, choices=['TXm','TXx','TXge35','TXge40','TXge45','TXge50','TX90P','TNle02'], help="specify the index to be computed")
+    parser.add_argument("--index", type=str, choices=['TNm','TNn','TXm','TXx','TGm','TXge35','TXge40','TXge45','TXge50','TX90P','TNle02'], help="specify the index to be computed")
     parser.add_argument("--tasmax_fpath", type=str, default=None, help="generic path to tasmax files (specify year as {Y} and emission pathway as {pathway}")
     parser.add_argument("--tasmax_varname", type=str, default ='tasmax', help="variable name for tasmax in tasmax_fpath")
     parser.add_argument("--tasmin_fpath", type=str, default=None, help="generic path to tasmin files (specify year as {Y} and emission pathway as {pathway}")
     parser.add_argument("--tasmin_varname", type=str, default ='tasmin', help="variable name for tasmin in tasmin_fpath")
     parser.add_argument("--driving_model", type=str, help="Name of the driving model")
     parser.add_argument("--downscaling_model", type=str, help="Name of the downscaling model")
-    parser.add_argument("--bias_correction_method", type=str, choices=['raw','qme','ecdfm','mbcn','mrnbc','qdc','ACS-QME'], help="Name of the bias correction method")
+    parser.add_argument("--bias_correction_method", type=str, choices=['raw','qme','ecdfm','mbcn','mrnbc','qdc','ACS-QME','ACS-MRNBC','QDC'], help="Name of the bias correction method")
     parser.add_argument("--pathway", type=str, choices=['ssp126','ssp370','rcp45','rcp85','historical'], help="Emission pathway")
     parser.add_argument("--BPStartYr", type=int, default=1985, help="Start of EHF base period YYYY")
     parser.add_argument("--BPEndYr", type=int, default=2014, help="End of EHF base period YYYY")
@@ -201,7 +220,6 @@ author:
     parser.add_argument("--lat_bounds", type=float, default=None, nargs='*', help="Latitude: single value for nearest point or two values for bounds")
     parser.add_argument("--StartYr", type=int, help="Calculate EHF from this year")
     parser.add_argument("--EndYr", type=int, help="Calculate EHF to this year")
-    parser.add_argument("--calendar", type=str, choices=['standard','360_day'], default='standard', help="Calendar type for input data")
     parser.add_argument("--ofile_drs",type=str,default=False,help="Define drs for output files. Must contain INDEX and TPERIOD (replaced by script). Default: INDEX_<driving-model>_<pathway>_<downscaling-model>_<bias-correction_method>_TPERIOD.nc")
     parser.add_argument("--tidy_wkdir",type=bool,default=False,help="Remove intermediate working files")
 
