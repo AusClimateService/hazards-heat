@@ -42,7 +42,8 @@ def get_tasmax(inargs,Ystart,Yend):
     """Read in daily maximum temperature
     Args:
         inargs (class): class object with input arguments from command line
-        Y (int): identify year to calculate
+        Ystart (int): identify first year to read
+        Yend (int): identify last year to read
     Returns:
         DataArray: data array containing tasmax per sampling constraints.
     """
@@ -50,10 +51,7 @@ def get_tasmax(inargs,Ystart,Yend):
     fnames = [inargs.tasmax_fpath.format(Y=Y,pathway=utils.climate.emission_pathway(Y,inargs.pathway)) for Y in range(Ystart,Yend+1)]
     fnames = list(set(fnames))
     fnames.sort()    
-    if 'AUS-15' in inargs.tasmax_fpath:
-        tasmax = utils.generalio.read_data(infiles=fnames,var=inargs.tasmax_varname,lat_bounds=inargs.lat_bounds,lon_bounds=inargs.lon_bounds,time_bounds=[f'{Ystart}-01',f'{Yend}-{inargs.yearend_short}'],output_units='degC')
-    else:
-        tasmax = utils.generalio.read_data(infiles=fnames,var=inargs.tasmax_varname,lat_bounds=inargs.lat_bounds,lon_bounds=inargs.lon_bounds,time_bounds=[f'{Ystart}-01-01',f'{Yend}-{inargs.yearend}'],output_units='degC')
+    tasmax = utils.generalio.read_data(infiles=fnames,var=inargs.tasmax_varname,lat_bounds=inargs.lat_bounds,lon_bounds=inargs.lon_bounds,time_bounds=[f'{Ystart}-01-01',f'{Yend}-{inargs.yearend}'],output_units='degC')
 
     utils.timeseries.check_correct_ntimesteps(tasmax,sdate=f'{Ystart}-01-01',edate=f'{Yend}-{inargs.yearend}',freq='D')
     
@@ -63,7 +61,8 @@ def get_twisomax(inargs,Ystart,Yend):
     """Read in daily maximum wet-bulb temperature
     Args:
         inargs (class): class object with input arguments from command line
-        Y (int): identify year to calculate
+        Ystart (int): identify first year to read
+        Yend (int): identify last year to read
     Returns:
         DataArray: data array containing twisomax per sampling constraints.
     """
@@ -71,10 +70,7 @@ def get_twisomax(inargs,Ystart,Yend):
     fnames = [inargs.twisomax_fpath.format(Y=Y,pathway=utils.climate.emission_pathway(Y,inargs.pathway)) for Y in range(Ystart,Yend+1)]
     fnames = list(set(fnames))
     fnames.sort()
-    if 'AUS-15' in inargs.twisomax_fpath:
-        twisomax = utils.generalio.read_data(infiles=fnames,var=inargs.twisomax_varname,lat_bounds=inargs.lat_bounds,lon_bounds=inargs.lon_bounds,time_bounds=[f'{Ystart}-01',f'{Yend}-{inargs.yearend_short}'],output_units='degC')
-    else:
-        twisomax = utils.generalio.read_data(infiles=fnames,var=inargs.twisomax_varname,lat_bounds=inargs.lat_bounds,lon_bounds=inargs.lon_bounds,time_bounds=[f'{Ystart}-01-01',f'{Yend}-{inargs.yearend}'],output_units='degC')
+    twisomax = utils.generalio.read_data(infiles=fnames,var=inargs.twisomax_varname,lat_bounds=inargs.lat_bounds,lon_bounds=inargs.lon_bounds,time_bounds=[f'{Ystart}-01-01',f'{Yend}-{inargs.yearend}'],output_units='degC')
 
     utils.timeseries.check_correct_ntimesteps(twisomax,sdate=f'{Ystart}-01-01',edate=f'{Yend}-{inargs.yearend}',freq='D')
 
@@ -84,7 +80,8 @@ def get_tasmin(inargs,Ystart,Yend):
     """Read in daily minimum temperature
     Args:
         inargs (class): class object with input arguments from command line
-        Y (int): identify year to calculate
+        Ystart (int): identify first year to read
+        Yend (int): identify last year to read
     Returns:
         DataArray: data array containing tasmin per sampling constraints.
     """
@@ -140,7 +137,6 @@ def main(inargs):
         inargs.yearend = '12-30'
     else:
         inargs.yearend = '12-31'
-    inargs.yearend_short = '12'
  
     if inargs.ofile_drs:
         if not all(s in inargs.ofile_drs for s in ['INDEX','TPERIOD']):
@@ -186,10 +182,7 @@ def main(inargs):
                             'long_name':'annual mean daily average temperature','cell_methods':'time: mean (interval: 1Y)'})
                 
                 elif inargs.index in ['TXge35','TXge40','TXge45','TXge50','TwXge25','TwXge27','TwXge29','TwXge31']:
-                    if inargs.index in ['TXge35','TXge40','TXge45','TXge50']:
-                        deg_text = inargs.index[4:6]
-                    elif inargs.index in ['TwXge25','TwXge27','TwXge29','TwXge31']:
-                        deg_text = inargs.index[5:7]
+                    deg_text = inargs.index.replace('TwXge','').replace('TXge','')
                     index = xclim.indices.tx_days_above(max_data, thresh=f'{float(deg_text)} degC', freq='YS', op='>=')
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
                             'long_name':f'days greater than or equal to {float(deg_text)}degC','cell_methods':'time: count (interval: 1Y)'})
@@ -224,10 +217,7 @@ def main(inargs):
                             'long_name':f'days less than or equal to {float(inargs.index[4:6])}degC','cell_methods':'time: count (interval: 1Y)'})
 
                 elif inargs.index in ['TX_90P','TwX_90P']:
-                    if inargs.index in ['TX_90P']:
-                        set_percentile = inargs.index[3:5]
-                    elif inargs.index in ['TwX_90P']:
-                        set_percentile = inargs.index[4:6]
+                    set_percentile = inargs.index.replace('TX_','').replace('TwX_','').replace('P','')
                     index = max_data.resample(time='YS').quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='midpoint')
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
                             'long_name':f'{float(set_percentile)}th percentile of {max_name}','cell_methods':f'time: {float(set_percentile)}th percentile (interval: 1Y)'})
