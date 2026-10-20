@@ -201,13 +201,11 @@ def main(inargs):
                             max_bp = get_tasmax(inargs,inargs.BPStartYr,inargs.BPEndYr)
                         elif inargs.index == 'TwX_gt90P':
                             max_bp = get_twisomax(inargs,inargs.BPStartYr,inargs.BPEndYr)
-                        print(max_bp)
                         max_bp_per = xclim.core.calendar.percentile_doy(max_bp,per=90,window=5).sel(percentiles=90)
                         utils.generalio.save_data(max_bp_per,get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
                         del(max_bp,max_bp_per)
                         
                     max_per = xr.open_dataset(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
-                    print(max_per)
                     index = xclim.indices.tx90p(max_data,max_per.per)
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
                             'long_name':f'days above the doy 90th percentile (base period={inargs.BPStartYr}-{inargs.BPEndYr}, window=5)','cell_methods':'time: count (interval: 1Y)'})
@@ -219,22 +217,20 @@ def main(inargs):
                     elif inargs.index == 'TwX_gt90Pfx':
                         bp_index_name = 'TwX90perc_fx'
                         index_varname = inargs.twisomax_varname
-                    if not os.path.exists(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}')):
+                    if not os.path.exists(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}').replace('day','fx')):
                         print('Creating base period file')
                         if inargs.index == 'TX_gt90Pfx':
                             max_bp = get_tasmax(inargs,inargs.BPStartYr,inargs.BPEndYr)
                         elif inargs.index == 'TwX_gt90Pfx':
                             max_bp = get_twisomax(inargs,inargs.BPStartYr,inargs.BPEndYr)
-                        print(max_bp)
                         set_percentile = inargs.index.replace('TX_','').replace('TwX_','').replace('gt','').replace('P','').replace('fx','')
                         max_bp_per = max_bp.quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='median_unbiased')
                         max_bp_per = utils.generalio.update_attrs(max_bp_per,{'name':'per','units':'degC',\
                                 'long_name':f'{float(set_percentile)}th percentile of {max_name}','cell_methods':f'time: {float(set_percentile)}th percentile (interval: {int(inargs.BPEndYr-inargs.BPStartYr+1)}Y)'})
-                        utils.generalio.save_data(max_bp_per,get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
+                        utils.generalio.save_data(max_bp_per,get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}').replace('day','fx'))
                         del(max_bp,max_bp_per)
 
-                    max_per = xr.open_dataset(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
-                    print(max_per)
+                    max_per = xr.open_dataset(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}').replace('day','fx'))
                     index = xclim.indices.generic.compare(max_data, 'gt', max_per.per).resample(time='YS').sum(dim="time", skipna=True, keep_attrs=True)
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
                             'long_name':f'days above fixed 90th percentile (base period={inargs.BPStartYr}-{inargs.BPEndYr})','cell_methods':'time: count (interval: 1Y)'})
