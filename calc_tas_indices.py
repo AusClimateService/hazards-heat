@@ -148,10 +148,10 @@ def main(inargs):
         for Y in range(inargs.StartYr,inargs.EndYr+1):
             if not os.path.exists(get_fname(index=inargs.index,tperiod=f'{Y}0101-{Y}{inargs.yearend.replace("-","")}').replace('day','annual')):
 
-                if inargs.index in ['TXm','TXx','TGm','TXge35','TXge40','TXge45','TXge50','TX_gt90P','TX_90P']:
+                if inargs.index in ['TXm','TXx','TGm','TXge35','TXge40','TXge45','TXge50','TX_gt90P','TX_gt90Pfx','TX_90P']:
                     max_data = get_tasmax(inargs,Y,Y)
                     max_name = 'temperature'
-                elif inargs.index in ['TwXm','TwXx','TwXge25','TwXge27','TwXge29','TwXge31','TwX_gt90P','TwX_90P']:
+                elif inargs.index in ['TwXm','TwXx','TwXge25','TwXge27','TwXge29','TwXge31','TwX_gt90P','TwX_gt90Pfx','TwX_90P']:
                     max_data = get_twisomax(inargs,Y,Y)
                     max_name = 'wet-bulb temperature'
 
@@ -211,6 +211,48 @@ def main(inargs):
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
                             'long_name':f'days above the doy 90th percentile (base period={inargs.BPStartYr}-{inargs.BPEndYr}, window=5)','cell_methods':'time: count (interval: 1Y)'})
                 
+                #####
+                elif inargs.index in ['TX_gt90Pfx','TwX_gt90Pfx']:
+                    if inargs.index == 'TX_gt90Pfx':
+                        bp_index_name = 'TX90perc_fx'
+                        index_varname = inargs.tasmax_varname
+                    elif inargs.index == 'TwX_gt90Pfx':
+                        bp_index_name = 'TwX90perc_fx'
+                        index_varname = inargs.twisomax_varname
+                    if not os.path.exists(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}')):
+                        print('Creating base period file')
+                        if inargs.index == 'TX_gt90Pfx':
+                            max_bp = get_tasmax(inargs,inargs.BPStartYr,inargs.BPEndYr)
+                        elif inargs.index == 'TwX_gt90Pfx':
+                            max_bp = get_twisomax(inargs,inargs.BPStartYr,inargs.BPEndYr)
+                        print(max_bp)
+                        # max_bp_per = xclim.core.calendar.percentile_doy(max_bp,per=90,window=5).sel(percentiles=90)
+                        set_percentile = inargs.index.replace('TX_','').replace('TwX_','').replace('gt','').replace('P','').replace('fx','')
+                        
+                        # max_bp_per = max_bp.quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='midpoint')
+                        max_bp_per = max_bp.quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='median_unbiased')
+                        # max_bp_per = max_bp.quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='linear')
+                        # max_bp_per = xclim.core.utils.nan_calc_percentiles(max_bp, percentiles=[float(set_percentile)], axis=-1, alpha=1.0, beta=1.0, copy=True)
+                        # max_bp_per = xclim.core.utils.nan_calc_percentiles(max_bp, percentiles=float(set_percentile), axis='time', alpha=0.3333333333333333, beta=0.3333333333333333, copy=True)
+                        # max_bp_per = xclim.core.utils.nan_calc_percentiles(max_bp, axis=-1, alpha=1.0, beta=1.0, copy=True) # median
+                        
+                        max_bp_per = utils.generalio.update_attrs(max_bp_per,{'name':'per','units':'degC',\
+                                'long_name':f'{float(set_percentile)}th percentile of {max_name}','cell_methods':f'time: {float(set_percentile)}th percentile (interval: {int(inargs.BPEndYr-inargs.BPStartYr+1)}Y)'})
+                        
+                        utils.generalio.save_data(max_bp_per,get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
+                        del(max_bp,max_bp_per)
+
+                    max_per = xr.open_dataset(get_fname(index=bp_index_name,tperiod=f'{inargs.BPStartYr}0101-{inargs.BPEndYr}{inargs.yearend.replace("-","")}'))
+                    print(max_per)
+                    # index = xclim.indices.tx90p(max_data,max_per.per)
+                    index = xclim.indices.generic.compare(max_data, 'gt', max_per.per).resample(time='YS').sum(dim="time", skipna=True, keep_attrs=True) # xclim.indices.generic.compare(left, op, right)
+                    # index = (max_data > max_per.per).resample(time='YS').sum(dim="time", skipna=True, keep_attrs=True)
+                    # index['time'] = max_data.time.min()
+                    # index = index.expand_dims(dim={"time": 1}, axis=0)
+                    index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
+                            'long_name':f'days above fixed 90th percentile (base period={inargs.BPStartYr}-{inargs.BPEndYr})','cell_methods':'time: count (interval: 1Y)'})
+                #####
+
                 elif inargs.index == 'TNle02':
                     index = xclim.indices.tn_days_below(get_tasmin(inargs,Y,Y), thresh=f'{float(inargs.index[4:6])} degC', freq='YS', op='<=')
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'1',\
@@ -231,7 +273,7 @@ def main(inargs):
         utils.timeseries.check_correct_ntimesteps(index_cat,sdate=f'{inargs.StartYr}-01-01',edate=f'{inargs.EndYr}-{inargs.yearend}',freq='YS')
         utils.generalio.save_data(index_cat,get_fname(index=inargs.index,tperiod=f"{inargs.StartYr}0101-{inargs.EndYr}{inargs.yearend.replace('-','')}").replace('day','annual'),append_global_attrs=global_attrs(inargs))
 
-        if inargs.tidy_wkdir:
+        if inargs.tidy_wkdir == True:
             for f in fnames:
                 os.remove(f)
     
@@ -252,7 +294,7 @@ authors:
                                      argument_default=argparse.SUPPRESS,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
                                      
-    parser.add_argument("--index", type=str, choices=['TNm','TNn','TXm','TXx','TGm','TXge35','TXge40','TXge45','TXge50','TX_gt90P','TX_90P','TNle02','TwXm','TwXx','TwXge25','TwXge27','TwXge29','TwXge31','TwX_gt90P','TwX_90P'], help="specify the index to be computed")
+    parser.add_argument("--index", type=str, choices=['TNm','TNn','TXm','TXx','TGm','TXge35','TXge40','TXge45','TXge50','TX_gt90P','TX_gt90Pfx','TX_90P','TNle02','TwXm','TwXx','TwXge25','TwXge27','TwXge29','TwXge31','TwX_gt90P','TwX_gt90Pfx','TwX_90P'], help="specify the index to be computed")
     parser.add_argument("--tasmax_fpath", type=str, default=None, help="generic path to tasmax files (specify year as {Y} and emission pathway as {pathway}")
     parser.add_argument("--tasmax_varname", type=str, default='tasmax', help="variable name for tasmax in tasmax_fpath")
     parser.add_argument("--twisomax_fpath", type=str, default=None, help="generic path to twisomax files (specify year as {Y} and emission pathway as {pathway}")
