@@ -130,7 +130,8 @@ def main(inargs):
 
     dask.diagnostics.ProgressBar().register()
 
-    sample_file = inargs.tasmax_fpath.format(Y=inargs.StartYr,pathway=utils.climate.emission_pathway(inargs.StartYr,inargs.pathway))
+    try: sample_file = inargs.tasmax_fpath.format(Y=inargs.StartYr,pathway=utils.climate.emission_pathway(inargs.StartYr,inargs.pathway))
+    except: sample_file = inargs.twisomax_fpath.format(Y=inargs.StartYr,pathway=utils.climate.emission_pathway(inargs.StartYr,inargs.pathway))
     nc_calendar = utils.timeseries.get_netcdf_calendar(sample_file)
     
     if nc_calendar == '360_day':
