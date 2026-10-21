@@ -121,7 +121,7 @@ def global_attrs(inargs):
             'downscaling_model': inargs.downscaling_model,
             'pathway': inargs.pathway,
             'bias_correction_method': inargs.bias_correction_method,
-            'contact': "Mitchell Black (mitchell.black@bom.gov.au)",
+            'contact': "Mitchell Black (mitchell.black@bom.gov.au), Cassandra Rogers (cassandra.rogers@bom.gov.au)",
             'code': "https://github.com/Ausutils.climateateService/hazards-heat"
             }
 
