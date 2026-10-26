@@ -242,7 +242,7 @@ def main(inargs):
 
                 elif inargs.index in ['TX_90P','TwX_90P']:
                     set_percentile = inargs.index.replace('TX_','').replace('TwX_','').replace('P','')
-                    index = max_data.resample(time='YS').quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='median_unbiased')
+                    index = max_data.resample(time='YS').quantile(float(set_percentile)/100,dim='time',skipna=True,keep_attrs=True,method='midpoint')
                     index = utils.generalio.update_attrs(index,{'name':inargs.index,'units':'degC',\
                             'long_name':f'{float(set_percentile)}th percentile of {max_name}','cell_methods':f'time: {float(set_percentile)}th percentile (interval: 1Y)'})
                 
